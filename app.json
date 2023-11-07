@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "wave-1",
-    "slug": "wave-1",
+    "name": "wave",
+    "slug": "wave",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.raldweb.wave"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "032dad76-23bc-4f42-9198-152f3329f6a0"
+      }
     }
   }
 }
