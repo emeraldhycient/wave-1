@@ -31,7 +31,7 @@ class VideoApiSdk {
     }
 
     async getVideos({ page, page_size }: { page?: number | string , page_size?: number | string  }) {
-      return await videoApiClient.get(`/videos/?page=${page}&page_size=${page_size}`)  
+      return await videoApiClient.get(`/videos/`)  
     }
 
 }

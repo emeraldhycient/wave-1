@@ -36,7 +36,7 @@ const Home = ({ navigation }: any) => {
   const fetchVideos = async () => {
     setisloading(true)
     try {
-      const resp = await videoApiSdk.getVideos({ page: 1, page_size: 10 })
+      const resp = await videoApiSdk.getVideos({})
       setmyvideos(resp?.data?.results)
       setisloading(false)
     } catch (error: any) {
@@ -49,8 +49,6 @@ const Home = ({ navigation }: any) => {
     fetchVideos()
   }, [])
 
-  const { height } = useWindowDimensions()
-
 
   return (
     <>
@@ -61,17 +59,21 @@ const Home = ({ navigation }: any) => {
         }}>
           {
             myvideos.length > 0 ?
-              myvideos.map((item, index) => (
-                <VideoPlayer
-                  videoProps={{
-                    shouldPlay: false,
-                    resizeMode: ResizeMode.CONTAIN,
-                    useNativeControls: true,
-                    source: {
-                      uri: 'https://speechwave.b-cdn.net/9370886396721/MonNov06202314:47:24GMT+0100out.mp4',
-                    },
-                  }}
-                />
+              myvideos.map((item:any, index) => (
+                <View key={index} style={styles.card}>
+                  <VideoPlayer
+                    style={{height:400}}
+                    videoProps={{
+                      shouldPlay: false,
+                      resizeMode: ResizeMode.STRETCH,
+                      useNativeControls: true,
+                      videoStyle:{height:400,width:"100%"},
+                      source: {
+                        uri: item?.media,
+                      },
+                    }}
+                  />
+                </View>
               ))
               :
               <View style={{
@@ -155,5 +157,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
+  card: {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    marginBottom:10,
+    borderRadius: 10,
+    padding: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.20,
+    shadowRadius: 1.41,
+
+    elevation: 2,
+  }
 });
 
