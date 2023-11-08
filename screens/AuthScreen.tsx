@@ -19,6 +19,7 @@ import Alert from "../helpers/alert";
 import countries from "../constants/countries.json"
 import useAuthenticationState from "../states/zustandStore/authentication";
 import { setToken } from "../states/asyncStore/token";
+import Colors from "../theme/colors";
 
 function AuthScreen({ navigation }: any) {
   const [isSignIn, setIsSignIn] = useState(false);
@@ -247,9 +248,9 @@ function AuthScreen({ navigation }: any) {
                   backgroundColor: "black",
                   borderWidth: 1,
                 }}
-                onPress={() => setIsSignIn(true)}
+                onPress={() => setIsSignIn(false)}
               >
-                <Text style={{ color: "#CFD8D8", fontSize: 16, textAlign: "left" }}>Login</Text>
+                <Text style={{ color: Colors.primary, fontSize: 16, textAlign: "left" }}>Login</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity
@@ -400,9 +401,9 @@ function AuthScreen({ navigation }: any) {
                   backgroundColor: "black",
                   borderWidth: 1,
                 }}
-                onPress={() => setIsSignIn(false)}
+                onPress={() => setIsSignIn(true)}
               >
-                <Text style={{ color: "#CFD8D8", fontSize: 16, textAlign: "left" }}>Sign Up</Text>
+                <Text style={{ color: Colors.primary, fontSize: 16, textAlign: "left" }}>Sign Up</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity
