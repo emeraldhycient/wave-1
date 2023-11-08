@@ -57,6 +57,9 @@ const Home = ({ navigation }: any) => {
         <View style={{
           height: "100%"
         }}>
+          <View style={{ width: "46%",marginVertical:10, }}>
+            <ActionCard icon={<AntDesign name="clouduploado" size={26} color={Colors.primary} style={{ marginBottom: 5 }} />} title={"Videos"} subtext={`Total Projects : ${myvideos?.length} `} onPress={() => handleNextPage("converter")} />
+          </View>
           {
             myvideos.length > 0 ?
               myvideos.map((item:any, index) => (
@@ -65,7 +68,7 @@ const Home = ({ navigation }: any) => {
                     style={{height:400}}
                     videoProps={{
                       shouldPlay: false,
-                      resizeMode: ResizeMode.STRETCH,
+                      resizeMode: ResizeMode.CONTAIN,
                       useNativeControls: true,
                       videoStyle:{height:400,width:"100%"},
                       source: {
@@ -158,7 +161,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor:"rgba(255, 255, 255, 0.1)",
     marginBottom:10,
     borderRadius: 10,
     padding: 10,
