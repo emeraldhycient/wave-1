@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, useWindowDimensions } from 'react-native'
+import { Platform, StyleSheet, Text, View, useWindowDimensions } from 'react-native'
 import React from 'react'
 import CustomHeader from '../../components/common/customHeader'
 import { ScrollView } from 'react-native'
@@ -14,7 +14,7 @@ const Profile = () => {
   return (
     <ScrollView style={{ flex: 1, height: '100%', backgroundColor: "#000000" }} contentContainerStyle={[{ margin: 0, backgroundColor: "#000000" }]}>
       <CustomHeader title="Igweze Hycient" titleStyle={{ fontWeight: '600', fontSize: 20 }} />
-      <View style={{ flexDirection: "column", justifyContent: "space-between", height: height - 150 }}>
+      <View style={{ flexDirection: "column", justifyContent: "space-between", height: Platform.OS === "android" ? height - 150 : height - 270 }}>
         <View>
           <Text style={{ color: Colors.grey, fontSize: 14, textAlign: "center" }}>igwezehycient86@gmail.com</Text>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width, paddingHorizontal: 20, flexWrap: "wrap" }}>

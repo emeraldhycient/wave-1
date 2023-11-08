@@ -102,6 +102,18 @@
         "iso": "BH"
     },
     {
+        "code": "+1-246",
+        "flag": "https://flagcdn.com/w320/bb.png",
+        "name": "Bangladesh",
+        "iso": "BD"
+    },
+    {
+        "code": "+375",
+        "flag": "https://flagcdn.com/w320/by.png",
+        "name": "Barbados",
+        "iso": "BB"
+    },
+    {
         "code": "+32",
         "flag": "https://flagcdn.com/w320/be.png",
         "name": "Belarus",
@@ -124,5 +136,11 @@
         "flag": "https://flagcdn.com/w320/bm.png",
         "name": "Benin",
         "iso": "BJ"
+    },
+    {
+        "code": "+975",
+        "flag": "https://flagcdn.com/w320/bt.png",
+        "name": "Bermuda",
+        "iso": "BM"
     }
 ]
