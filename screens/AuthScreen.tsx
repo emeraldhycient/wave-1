@@ -9,10 +9,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import SelectDropdown from "react-native-select-dropdown";
 import { StatusBar } from "expo-status-bar";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { styles } from "../css/stylesheet";
 import authService from "../services/auth/auth.service";
 import Alert from "../helpers/alert";
@@ -20,6 +17,8 @@ import countries from "../constants/countries.json"
 import useAuthenticationState from "../states/zustandStore/authentication";
 import { setToken } from "../states/asyncStore/token";
 import Colors from "../theme/colors";
+import { Dropdown } from 'react-native-element-dropdown';
+
 
 function AuthScreen({ navigation }: any) {
   const [isSignIn, setIsSignIn] = useState(false);
@@ -27,6 +26,20 @@ function AuthScreen({ navigation }: any) {
   const [phone, setPhone] = useState("70886396721");
   const [couuntryCode, setcouuntryCode] = useState("");
   const [password, setPassword] = useState("");
+
+  const [value, setValue] = useState(null);
+  const data = [
+    { label: 'Item 1', value: '1' },
+    { label: 'Item 2', value: '2' },
+    { label: 'Item 3', value: '3' },
+    { label: 'Item 4', value: '4' },
+    { label: 'Item 5', value: '5' },
+    { label: 'Item 6', value: '6' },
+    { label: 'Item 7', value: '7' },
+    { label: 'Item 8', value: '8' },
+  ];
+  const [isFocus, setIsFocus] = useState(false);
+
 
   const [isLoading, setisLoading] = useState(false)
 
@@ -156,77 +169,29 @@ function AuthScreen({ navigation }: any) {
             </Text>
             <View style={{ display: "flex", flexDirection: "row", gap: 0 }}>
               <View style={styles.countryDropDown}>
-                <SelectDropdown
+                <Dropdown
+                  style={[styless.dropdown, isFocus && { borderColor: 'blue' }]}
+                  placeholderStyle={styless.placeholderStyle}
+                  selectedTextStyle={styless.selectedTextStyle}
+                  inputSearchStyle={styless.inputSearchStyle}
+                  iconStyle={styless.iconStyle}
                   data={countries}
-                  onSelect={(selectedItem, index) => {
-                    setcouuntryCode(selectedItem?.code)
-                    console.log(selectedItem, index);
+                  search
+                  maxHeight={300}
+                  labelField="code"
+                  valueField="code"
+                  placeholder={!isFocus ? 'code' : '...'}
+                  searchPlaceholder="Search..."
+                  value={couuntryCode}
+                  onFocus={() => setIsFocus(true)}
+                  onBlur={() => setIsFocus(false)}
+                  onChange={item => {
+                    setcouuntryCode(item?.code);
+                    setIsFocus(false);
                   }}
-                  buttonStyle={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    backgroundColor: "#000",
-                    width: "100%",
-                    height: 30,
-                    padding: 0,
-                    margin: 0,
-                  }}
-                  renderCustomizedButtonChild={(selectedItem, index) => {
-                    return (
-                      <View
-                        key={index}
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          width: "100%",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        {selectedItem ? (
-                          <Image
-                            source={{
-                              uri: selectedItem.flag
-                            }}
-                            style={styless.dropdown3BtnImage}
-                          />
-                        ) : (
-                          <Ionicons
-                            name="md-earth-sharp"
-                            color={"#777"}
-                            size={15}
-                          />
-                        )}
-                        <Text style={{ color: "white" }}>
-                          {selectedItem ? selectedItem.code : ""}
-                        </Text>
-                        <FontAwesome
-                          name="chevron-down"
-                          color={"#777"}
-                          size={15}
-                        />
-                      </View>
-                    );
-                  }}
-                  dropdownStyle={styless.dropdown3DropdownStyle}
-                  rowStyle={styless.dropdown3RowStyle}
-                  selectedRowStyle={styless.dropdown1SelectedRowStyle}
-                  renderCustomizedRowChild={(item, index) => {
-                    return (
-                      <View style={styless.dropdown3RowChildStyle}>
-                        <Image
-                          source={item.flag}
-                          style={styless.dropdownRowImage}
-                        />
-                        <Text style={{ color: "white" }}>
-                          {item.code}
-                        </Text>
-                      </View>
-                    );
-                  }}
+                 
                 />
+               
               </View>
               <TextInput
                 keyboardType="numeric"
@@ -273,11 +238,6 @@ function AuthScreen({ navigation }: any) {
 
         {!isSignIn && (
           <>
-            {/* <Text
-            style={{ ...styles.smallText, textAlign: "left", width: "90%" }}
-          >
-            Select your country
-          </Text> */}
             <Text
               style={{ ...styles.smallText, textAlign: "left", width: "90%" }}
             >
@@ -285,79 +245,29 @@ function AuthScreen({ navigation }: any) {
             </Text>
             <View style={{ display: "flex", flexDirection: "row", gap: 0 }}>
               <View style={styles.countryDropDown}>
-                <SelectDropdown
+                <Dropdown
+                  style={[styless.dropdown, isFocus && { borderColor: 'blue' }]}
+                  placeholderStyle={styless.placeholderStyle}
+                  selectedTextStyle={styless.selectedTextStyle}
+                  inputSearchStyle={styless.inputSearchStyle}
+                  iconStyle={styless.iconStyle}
                   data={countries}
-                  onSelect={(selectedItem, index) => {
-                    setcouuntryCode(selectedItem?.code)
-                    console.log(selectedItem, index);
+                  search
+                  maxHeight={300}
+                  labelField="code"
+                  valueField="code"
+                  placeholder={!isFocus ? 'code' : '...'}
+                  searchPlaceholder="Search..."
+                  value={couuntryCode}
+                  onFocus={() => setIsFocus(true)}
+                  onBlur={() => setIsFocus(false)}
+                  onChange={item => {
+                    setcouuntryCode(item?.code);
+                    setIsFocus(false);
                   }}
-                  buttonStyle={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    backgroundColor: "#000",
-                    width: "100%",
-                    height: 30,
-                    padding: 0,
-                    margin: 0,
-                  }}
-                  renderCustomizedButtonChild={(selectedItem, index) => {
-                    return (
-                      <View
-                        key={index}
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          width: "100%",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        {selectedItem ? (
-                          <Image
-                            source={{
-                              uri: selectedItem.flag,
-                              cache: "only-if-cached",
-                              method: "GET",
-                            }}
-                            style={styless.dropdown3BtnImage}
-                          />
-                        ) : (
-                          <Ionicons
-                            name="md-earth-sharp"
-                            color={"#777"}
-                            size={15}
-                          />
-                        )}
-                        <Text style={{ color: "white" }}>
-                          {selectedItem ? selectedItem.code : ""}
-                        </Text>
-                        <FontAwesome
-                          name="chevron-down"
-                          color={"#777"}
-                          size={15}
-                        />
-                      </View>
-                    );
-                  }}
-                  dropdownStyle={styless.dropdown3DropdownStyle}
-                  rowStyle={styless.dropdown3RowStyle}
-                  selectedRowStyle={styless.dropdown1SelectedRowStyle}
-                  renderCustomizedRowChild={(item, index) => {
-                    return (
-                      <View style={styless.dropdown3RowChildStyle}>
-                        <Image
-                          source={item.flag}
-                          style={styless.dropdownRowImage}
-                        />
-                        <Text style={{ color: "white" }}>
-                          {item.code}
-                        </Text>
-                      </View>
-                    );
-                  }}
+
                 />
+               
               </View>
               <TextInput
                 keyboardType="numeric"
@@ -459,106 +369,139 @@ const styless = StyleSheet.create({
     paddingVertical: "10%",
     paddingBottom: "20%",
   },
+  dropdown: {
+    height: 50,
+    width: 100,
+    borderRadius: 8,
+    paddingHorizontal: 13,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  label: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+    color:"white"
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+    color: "white"
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
+  // dropdown1BtnStyle: {
+  //   width: "80%",
+  //   height: 50,
+  //   backgroundColor: "#FFF",
+  //   borderRadius: 8,
+  //   borderWidth: 1,
+  //   borderColor: "#444",
+  // },
+  // dropdown1BtnTxtStyle: { color: "#444", textAlign: "left" },
+  // dropdown1DropdownStyle: { backgroundColor: "#EFEFEF" },
+  // dropdown1RowStyle: {
+  //   backgroundColor: "#EFEFEF",
+  //   borderBottomColor: "#C5C5C5",
+  // },
+  // dropdown1RowTxtStyle: { color: "#444", textAlign: "left" },
+  // dropdown1SelectedRowStyle: { backgroundColor: "rgba(0,0,0,0.1)" },
+  // dropdown1searchInputStyleStyle: {
+  //   backgroundColor: "#EFEFEF",
+  //   borderRadius: 8,
+  //   borderBottomWidth: 1,
+  //   borderBottomColor: "#444",
+  // },
 
-  dropdown1BtnStyle: {
-    width: "80%",
-    height: 50,
-    backgroundColor: "#FFF",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#444",
-  },
-  dropdown1BtnTxtStyle: { color: "#444", textAlign: "left" },
-  dropdown1DropdownStyle: { backgroundColor: "#EFEFEF" },
-  dropdown1RowStyle: {
-    backgroundColor: "#EFEFEF",
-    borderBottomColor: "#C5C5C5",
-  },
-  dropdown1RowTxtStyle: { color: "#444", textAlign: "left" },
-  dropdown1SelectedRowStyle: { backgroundColor: "rgba(0,0,0,0.1)" },
-  dropdown1searchInputStyleStyle: {
-    backgroundColor: "#EFEFEF",
-    borderRadius: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#444",
-  },
+  // dropdown2BtnStyle: {
+  //   width: "80%",
+  //   height: 50,
+  //   backgroundColor: "#444",
+  //   borderRadius: 8,
+  // },
+  // dropdown2BtnTxtStyle: {
+  //   color: "#FFF",
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  // },
+  // dropdown2DropdownStyle: {
+  //   backgroundColor: "#444",
+  //   borderRadius: 12,
+  // },
+  // dropdown2RowStyle: { backgroundColor: "#444", borderBottomColor: "#C5C5C5" },
+  // dropdown2RowTxtStyle: {
+  //   color: "#FFF",
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  // },
+  // dropdown2SelectedRowStyle: { backgroundColor: "rgba(255,255,255,0.2)" },
+  // dropdown2searchInputStyleStyle: {
+  //   backgroundColor: "#444",
+  //   borderBottomWidth: 1,
+  //   borderBottomColor: "#FFF",
+  // },
 
-  dropdown2BtnStyle: {
-    width: "80%",
-    height: 50,
-    backgroundColor: "#444",
-    borderRadius: 8,
-  },
-  dropdown2BtnTxtStyle: {
-    color: "#FFF",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  dropdown2DropdownStyle: {
-    backgroundColor: "#444",
-    borderRadius: 12,
-  },
-  dropdown2RowStyle: { backgroundColor: "#444", borderBottomColor: "#C5C5C5" },
-  dropdown2RowTxtStyle: {
-    color: "#FFF",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  dropdown2SelectedRowStyle: { backgroundColor: "rgba(255,255,255,0.2)" },
-  dropdown2searchInputStyleStyle: {
-    backgroundColor: "#444",
-    borderBottomWidth: 1,
-    borderBottomColor: "#FFF",
-  },
-
-  dropdown3BtnStyle: {
-    width: "80%",
-    height: 50,
-    backgroundColor: "#FFF",
-    paddingHorizontal: 0,
-    borderWidth: 1,
-    borderRadius: 8,
-    borderColor: "#444",
-  },
-  dropdown3BtnChildStyle: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 18,
-  },
-  dropdown3BtnImage: { width: 15, height: 15, resizeMode: "contain" },
-  dropdown3BtnTxt: {
-    color: "#444",
-    textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 24,
-    marginHorizontal: 12,
-  },
-  dropdown3DropdownStyle: { backgroundColor: "slategray" },
-  dropdown3RowStyle: {
-    backgroundColor: "slategray",
-    borderBottomColor: "#444",
-    height: 50,
-  },
-  dropdown3RowChildStyle: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    paddingHorizontal: 18,
-  },
-  dropdownRowImage: { width: 15, height: 15, resizeMode: "cover" },
-  dropdown3RowTxt: {
-    color: "#F1F1F1",
-    textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 24,
-    marginHorizontal: 12,
-  },
-  dropdown3searchInputStyleStyle: {
-    backgroundColor: "slategray",
-    borderBottomWidth: 1,
-    borderBottomColor: "#FFF",
-  },
+  // dropdown3BtnStyle: {
+  //   width: "80%",
+  //   height: 50,
+  //   backgroundColor: "#FFF",
+  //   paddingHorizontal: 0,
+  //   borderWidth: 1,
+  //   borderRadius: 8,
+  //   borderColor: "#444",
+  // },
+  // dropdown3BtnChildStyle: {
+  //   flex: 1,
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   alignItems: "center",
+  //   paddingHorizontal: 18,
+  // },
+  // dropdown3BtnImage: { width: 15, height: 15, resizeMode: "contain" },
+  // dropdown3BtnTxt: {
+  //   color: "#444",
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  //   fontSize: 24,
+  //   marginHorizontal: 12,
+  // },
+  // dropdown3DropdownStyle: { backgroundColor: "slategray" },
+  // dropdown3RowStyle: {
+  //   backgroundColor: "slategray",
+  //   borderBottomColor: "#444",
+  //   height: 50,
+  // },
+  // dropdown3RowChildStyle: {
+  //   flex: 1,
+  //   flexDirection: "row",
+  //   justifyContent: "flex-start",
+  //   alignItems: "center",
+  //   paddingHorizontal: 18,
+  // },
+  // dropdownRowImage: { width: 15, height: 15, resizeMode: "cover" },
+  // dropdown3RowTxt: {
+  //   color: "#F1F1F1",
+  //   textAlign: "center",
+  //   fontWeight: "bold",
+  //   fontSize: 24,
+  //   marginHorizontal: 12,
+  // },
+  // dropdown3searchInputStyleStyle: {
+  //   backgroundColor: "slategray",
+  //   borderBottomWidth: 1,
+  //   borderBottomColor: "#FFF",
+  // },
 });

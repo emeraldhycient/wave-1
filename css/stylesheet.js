@@ -178,7 +178,7 @@ export const styles = StyleSheet.create({
     width: "90%",
     padding: 10,
     margin: 10,
-    height:50,
+    height:65,
     fontSize: 16,
     borderColor: "#9457EB",
     borderWidth: 1,
@@ -225,7 +225,7 @@ export const styles = StyleSheet.create({
   passwordInput: {
     width: "70%",
     padding: 10,
-    height:50,
+    height:65,
     fontSize: 16,
     marginVertical: 10,
     borderRightWidth: 0,
