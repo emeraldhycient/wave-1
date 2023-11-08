@@ -58,7 +58,7 @@ const Home = ({ navigation }: any) => {
           height: "100%"
         }}>
           <View style={{ width: "46%",marginVertical:10, }}>
-            <ActionCard icon={<AntDesign name="clouduploado" size={26} color={Colors.primary} style={{ marginBottom: 5 }} />} title={"Videos"} subtext={`Total Projects : ${myvideos?.length} `} onPress={()=>{}} />
+            <ActionCard icon={<AntDesign name="clouduploado" size={26} color={Colors.primary} style={{ marginBottom: 5 }} />} title={"Videos"} subtext={`Total Projects : ${myvideos?.length} `} onPress={fetchVideos} />
           </View>
           {
             myvideos.length > 0 ?
