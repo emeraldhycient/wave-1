@@ -10,15 +10,15 @@ interface IVideoAudioTranslateTranscribe {
 
 class VideoApiSdk {
     async getFromLanguages() {
-        return await axiosClient.post('/videos/from_languages/')
+        return await axiosClient.get('/videos/from_languages/')
     }
 
     async getToLanguages() {
-        return await axiosClient.post('/videos/to_languages/')
+        return await axiosClient.get('/videos/to_languages/')
     }
 
     async getFromToLang() {
-        return await axiosClient.post('/videos/languages/')
+        return await axiosClient.get('/videos/languages/')
     }
 
     async getVideoAudioTranslationTranscription({ uri, from_lang = 'en-US', to_lang = 'fr', action = 'transcribe' }: IVideoAudioTranslateTranscribe) {

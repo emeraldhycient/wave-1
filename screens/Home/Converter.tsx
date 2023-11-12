@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Text, View, Platform, ScrollView, useWindowDimensions } from "react-native";
 import { StyleSheet, ActivityIndicator } from 'react-native';
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
@@ -12,6 +12,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import SubtitleEditor from "../../components/home/SubtitleEditor";
 import * as Crypto from 'expo-crypto';
 import LoadingModal from "../../components/common/LoadingModal";
+import RBSheet from "react-native-raw-bottom-sheet";
+import { Dropdown } from 'react-native-element-dropdown';
+import Alert from "../../helpers/alert";
+import { VideoService } from "../../services/VideoService";
 
 
 const getSourceVideo = async () => {
@@ -37,9 +41,12 @@ const Converter = ({ navigation }: any) => {
 
     const [isLoading, setLoading] = React.useState(false);
 
-    // React.useEffect(() => {
-    //     FFmpegKitConfig.init();
-    // }, []);
+
+    const [fromlang, setFromLang] = useState([])
+    const [tolang, setToLang] = useState([])
+
+    const [from_lang, setfrom_lang] = useState("")
+    const [to_lang, setto_lang] = useState("")
 
     const onPress = async () => {
 
@@ -54,9 +61,29 @@ const Converter = ({ navigation }: any) => {
         translateVideo({ uri: sourceVideo })
     }
 
+    useEffect(() => {
+        to_lang && from_lang && onPress() && refRBSheet.current.close()
+    }, [from_lang, to_lang])
+
+
+
+    const getLanguages = async () => {
+        try {
+            const tolang = await videoApiSdk.getToLanguages()
+            const fromlang = await videoApiSdk.getFromLanguages()
+            setToLang(tolang?.data)
+            setFromLang(fromlang?.data)
+        } catch (error: any) {
+            console.log(error)
+            Alert.error(error.response.data.message)
+        }
+    }
+
 
     useEffect(() => {
-        onPress()
+        // onPress()
+        getLanguages()
+        refRBSheet.current.open()
     }, [])
 
 
@@ -78,7 +105,7 @@ const Converter = ({ navigation }: any) => {
                 uri: Platform.OS === 'ios' ? uri.replace('file://', '') : uri,
             } as any);
 
-            const response = await videoApiSdk.getVideoAudioTranslationTranscription({ uri: formdata })
+            const response = await videoApiSdk.getVideoAudioTranslationTranscription({ uri: formdata,from_lang,to_lang })
 
             setsubtitles(response?.data?.captions)
             setsubtitleId(response?.data?.id)
@@ -137,46 +164,7 @@ const Converter = ({ navigation }: any) => {
                 console.log("encoding failure", error?.response?.data || error.message)
             }
 
-            // Create the video path
-            // const resultVideo = createFolder() + videoFilename;
-            // console.log("Creating video path...");
 
-            // if (resultVideo) {
-            //     console.log("Loading video with SRT...");
-
-            //     // Get the SRT file path
-            //     const path = getsrt.path;
-
-            //     // Construct the FFmpeg command
-            //     const ffmpegCommand = `-i ${source} -vf "subtitles='${path}'" ${resultVideo}`;
-
-
-            //     console.log({ ffmpegCommand });
-
-
-            //     // Execute the FFmpeg command
-            //     const ffmpegSession = await FFmpegKit.execute(ffmpegCommand);
-
-            //     const output = await ffmpegSession.getOutput();
-            //     console.log("FFmpeg Session Output:", output);
-
-
-            //     if (ffmpegSession) {
-            //         const returnCode = await ffmpegSession.getReturnCode();
-
-            //         if (ReturnCode.isSuccess(returnCode)) {
-            //             console.log("Loading video with SRT successful...");
-            //             setLoading(false);
-            //             setResult(resultVideo);
-            //             console.log("Result stored here:", { resultVideo });
-            //         } else {
-            //             setLoading(false);
-            //             console.error("Error in FFmpeg command execution. ReturnCode:", returnCode);
-            //         }
-            //     } else {
-            //         console.error("FFmpeg execution failed. ffmpegSession is null.");
-            //     }
-            // }
         } catch (error) {
             console.error("An error occurred:", error);
         }
@@ -224,7 +212,64 @@ const Converter = ({ navigation }: any) => {
                         </ScrollView>
                     </>
                 }
+                <RBSheet
+                    ref={refRBSheet}
+                    closeOnDragDown={true}
+                    closeOnPressMask={false}
+                    height={400}
+                    customStyles={{
+                        wrapper: {
+                            backgroundColor: "transparent"
+                        },
+                        container: {
+                            backgroundColor: "rgba(29, 35, 41, 1)",
+                        },
+                        draggableIcon: {
+                            backgroundColor: "#000"
+                        }
+                    }}
+                >
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width, paddingHorizontal: 20, flexWrap: "wrap" }}>
+                        <Dropdown
+                            style={[styles.dropdown]}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            inputSearchStyle={styles.inputSearchStyle}
+                            iconStyle={styles.iconStyle}
+                            data={fromlang}
+                            search
+                            maxHeight={300}
+                            labelField="label"
+                            valueField="value"
+                            placeholder={"From Lan"}
+                            searchPlaceholder="Search..."
+                            value={from_lang}
+                            onChange={(item: any) => {
+                                setfrom_lang(item?.value);
+                            }}
 
+                        />
+                        <Dropdown
+                            style={[styles.dropdown]}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            inputSearchStyle={styles.inputSearchStyle}
+                            iconStyle={styles.iconStyle}
+                            data={tolang}
+                            search
+                            maxHeight={300}
+                            labelField="label"
+                            valueField="value"
+                            placeholder={'To lang'}
+                            searchPlaceholder="Search..."
+                            value={to_lang}
+                            onChange={(item: any) => {
+                                setto_lang(item?.value);
+                            }}
+
+                        />
+                    </View>
+                </RBSheet>
             </View>
         </ScrollView>
     );
@@ -309,5 +354,43 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(29, 35, 41, 1)",
         padding: 3,
         borderRadius: 5
-    }
+    },
+
+
+    dropdown: {
+        height: 50,
+        width: "45%",
+        borderRadius: 8,
+        paddingHorizontal: 13,
+        borderWidth: 1,
+        borderColor: Colors.grey,
+    },
+    icon: {
+        marginRight: 5,
+    },
+    label: {
+        position: 'absolute',
+        backgroundColor: 'white',
+        left: 22,
+        top: 8,
+        zIndex: 999,
+        paddingHorizontal: 8,
+        fontSize: 14,
+    },
+    placeholderStyle: {
+        fontSize: 16,
+        color: "white"
+    },
+    selectedTextStyle: {
+        fontSize: 16,
+        color: "white"
+    },
+    iconStyle: {
+        width: 20,
+        height: 20,
+    },
+    inputSearchStyle: {
+        height: 40,
+        fontSize: 16,
+    },
 });
