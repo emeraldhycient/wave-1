@@ -29,6 +29,10 @@ class Auth {
         return await axiosClient.get(`/users/phone/otp?phone_no=${phone_no}`)
     }
 
+    async getAllCountryCodes() {
+        return await axiosClient.get('/users/dialing_code/')
+    }
+
 
 
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import { StatusBar } from "expo-status-bar";
 import { styles } from "../css/stylesheet";
 import authService from "../services/auth/auth.service";
 import Alert from "../helpers/alert";
-import countries from "../constants/countries.json"
+// import countries from "../constants/countries.json"
 import useAuthenticationState from "../states/zustandStore/authentication";
 import { setToken } from "../states/asyncStore/token";
 import Colors from "../theme/colors";
@@ -27,6 +27,8 @@ function AuthScreen({ navigation }: any) {
   const [couuntryCode, setcouuntryCode] = useState("");
   const [password, setPassword] = useState("");
 
+  const [countries, setcountries] = useState([])
+
   const [isFocus, setIsFocus] = useState(false);
 
 
@@ -36,6 +38,21 @@ function AuthScreen({ navigation }: any) {
     // Toggle between sign-in and sign-up forms
     setIsSignIn(!isSignIn);
   };
+
+  const fetchCodes =async () => {
+    try {
+      const data = await authService.getAllCountryCodes()
+      const val = JSON.parse(data.data)
+      setcountries(val)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchCodes()
+  }, [])
+  
 
   const setUser = useAuthenticationState((state: any) => state.setUser);
   const setIsAuthenticated = useAuthenticationState((state: any) => state.setIsAuthenticated);
@@ -174,7 +191,7 @@ function AuthScreen({ navigation }: any) {
                   value={couuntryCode}
                   onFocus={() => setIsFocus(true)}
                   onBlur={() => setIsFocus(false)}
-                  onChange={item => {
+                  onChange={(item:any) => {
                     setcouuntryCode(item?.code);
                     setIsFocus(false);
                   }}
@@ -250,7 +267,7 @@ function AuthScreen({ navigation }: any) {
                   value={couuntryCode}
                   onFocus={() => setIsFocus(true)}
                   onBlur={() => setIsFocus(false)}
-                  onChange={item => {
+                  onChange={(item:any) => {
                     setcouuntryCode(item?.code);
                     setIsFocus(false);
                   }}
