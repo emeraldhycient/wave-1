@@ -23,7 +23,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 function AuthScreen({ navigation }: any) {
   const [isSignIn, setIsSignIn] = useState(false);
   const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("70886396721");
+  const [phone, setPhone] = useState("");
   const [couuntryCode, setcouuntryCode] = useState("");
   const [password, setPassword] = useState("");
 

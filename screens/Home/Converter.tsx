@@ -131,7 +131,7 @@ const Converter = ({ navigation }: any) => {
 
             const getsrt = await useCreateSrtFile(subtitles, srtname);
             setResult(getsrt.path)
-            console.log("srtconntent", getsrt.srtContent)
+            // console.log("srtconntent", getsrt.srtContent)
 
             try {
                 let formdata = new FormData();
@@ -153,7 +153,7 @@ const Converter = ({ navigation }: any) => {
 
                 const response = await videoApiSdk.encodeSrt({ data: formdata, id: subtitleId, srt: getsrt.path })
 
-                console.log("response", response?.data?.media)
+                // console.log("response", response?.data?.media)
                 setlatestSource(response?.data?.media)
                 // navigation.goBack()
                 // refRBSheet.current.open()
