@@ -15,7 +15,7 @@ import LoadingModal from "../../components/common/LoadingModal";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { Dropdown } from 'react-native-element-dropdown';
 import Alert from "../../helpers/alert";
-import { VideoService } from "../../services/VideoService";
+import VideoPlayer from 'expo-video-player'
 
 
 const getSourceVideo = async () => {
@@ -155,7 +155,7 @@ const Converter = ({ navigation }: any) => {
 
                 console.log("response", response?.data?.media)
                 setlatestSource(response?.data?.media)
-                navigation.goBack()
+                // navigation.goBack()
                 // refRBSheet.current.open()
                 setLoading(false)
 
@@ -195,7 +195,16 @@ const Converter = ({ navigation }: any) => {
                 </View>}
                 <LoadingModal visible={isLoading} />
                 {
-                    latestSource && <Plyr uri={latestSource} result={result} />
+                    latestSource &&<>
+                        <Plyr uri={latestSource} result={result} />
+                        <ScrollView style={styles.subtitleEditoContainer} horizontal>
+                            {
+                                subtitles.length > 0 && subtitles.map((item: { Word: string, Start: string, Stop: string }, index) =>
+                                    <SubtitleEditor subtitle={item} onSubtitleChange={(text: string) => handleSubtitleEditing(index, text)} index={index} />
+                                )
+                            }
+                        </ScrollView>
+                    </> 
 
                 }
                 {
@@ -287,27 +296,17 @@ const Plyr = (props: {
 
     return (
         <View style={styles.videoContainer}>
-            <Video
-                ref={video}
-                style={styles.video}
-                source={{
-                    uri: props.uri,
+            <VideoPlayer
+                style={{ height: 500 }}
+                videoProps={{
+                    shouldPlay: false,
+                    resizeMode: ResizeMode.CONTAIN,
+                    useNativeControls: true,
+                    videoStyle: { height: 500, width: "100%" },
+                    source: {
+                        uri: props.uri,
+                    },
                 }}
-                useNativeControls
-                resizeMode={ResizeMode.COVER}
-                onPlaybackStatusUpdate={(status: AVPlaybackStatus) => setStatus(() => status)}
-            // textTracks={[
-            //     {
-            //         title: "English CC",
-            //         language: "en",
-            //         type: "text/vtt", // or another supported format
-            //         uri: props?.result ?? "", // link to your subtitle file
-            //     },
-            // ]}
-            // selectedTextTrack={{
-            //     type: "title",
-            //     value: "English CC",
-            // }}
             />
         </View>
 
