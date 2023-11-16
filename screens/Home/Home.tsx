@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { View, ScrollView, useWindowDimensions, StyleSheet } from "react-native";
+import { View, ScrollView, useWindowDimensions, StyleSheet, ActivityIndicator } from "react-native";
 
 import videoApiSdk from "../../services/video/video.service";
 import Empty from "../../components/home/Empty";
@@ -8,12 +8,17 @@ import Colors from "../../theme/colors";
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import * as Crypto from 'expo-crypto';
 
 import RBSheet from "react-native-raw-bottom-sheet";
 import ActionCard from "../../components/home/ActionCard";
 import { ResizeMode } from 'expo-av'
 import VideoPlayer from 'expo-video-player'
 import LoadingModal from "../../components/common/LoadingModal";
+import { TouchableOpacity } from "react-native";
+import { styles as customStyle } from "../../css/stylesheet";
+import downloadAndSaveVideo from "../../helpers/downloadAndSaveVideo";
 
 
 const Home = ({ navigation }: any) => {
@@ -50,6 +55,8 @@ const Home = ({ navigation }: any) => {
   }, [])
 
 
+
+
   return (
     <>
       <CustomHeader headerStyle={{ height: 70, paddingTop: 30, backgroundColor: "#000000" }} title="Projects" titleStyle={{ fontWeight: '600', fontSize: 20 }} rightIcon={<View style={{ backgroundColor: Colors.primary, height: 30, width: 30, borderRadius: 100, flexDirection: "column", alignItems: "center", justifyContent: 'center' }}><Feather name="plus" size={20} color="#fff" style={{ marginTop: 2 }} /></View>} onRightPress={() => refRBSheet.current.open()} />
@@ -57,25 +64,52 @@ const Home = ({ navigation }: any) => {
         <View style={{
           height: "100%"
         }}>
-          <View style={{ width: "46%",marginVertical:10, }}>
+          <View style={{ width: "46%", marginVertical: 10, }}>
             <ActionCard icon={<AntDesign name="clouduploado" size={26} color={Colors.primary} style={{ marginBottom: 5 }} />} title={"Videos"} subtext={`Total Projects : ${myvideos?.length} `} onPress={fetchVideos} />
           </View>
           {
             myvideos.length > 0 ?
-              myvideos.map((item:any, index) => (
+              myvideos.map((item: any, index) => (
                 <View key={index} style={styles.card}>
                   <VideoPlayer
-                    style={{height:400}}
+                    style={{ height: 400 }}
                     videoProps={{
                       shouldPlay: false,
                       resizeMode: ResizeMode.CONTAIN,
                       useNativeControls: true,
-                      videoStyle:{height:400,width:"100%"},
+                      videoStyle: { height: 400, width: "100%" },
                       source: {
                         uri: item?.media,
                       },
                     }}
                   />
+                  <TouchableOpacity
+                    style={{
+                      ...customStyle.primaryButton,
+                      width: "20%",
+                      marginVertical: 10,
+                      height: 40,
+                      alignSelf: "center",
+                    }}
+                    onPress={async () => {
+                      let uriArray = item?.media?.split(".");
+                      let fileType = uriArray[uriArray.length - 1];
+                      const name = await Crypto.digestStringAsync(
+                        Crypto.CryptoDigestAlgorithm.SHA256,
+                        item?.media
+                      );
+
+                      const shorten = name.slice(0, 6)
+
+                      downloadAndSaveVideo(item?.media, "wave-" + shorten + fileType)
+                    }}
+                  >
+                    {
+                      isloading ? <ActivityIndicator />
+                        :
+                        <FontAwesome5 name="file-download" color={Colors.white} size={22} />
+                    }
+                  </TouchableOpacity>
                 </View>
               ))
               :
@@ -161,11 +195,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor:"rgba(255, 255, 255, 0.1)",
-    marginBottom:10,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    marginBottom: 10,
     borderRadius: 10,
     padding: 10,
     shadowColor: "#000",
+    borderWidth: 1,
+    borderColor: Colors.primary,
     shadowOffset: {
       width: 0,
       height: 1,

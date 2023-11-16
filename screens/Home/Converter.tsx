@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View, Platform, ScrollView, useWindowDimensions } from "react-native";
+import { Text, View, Platform, ScrollView, useWindowDimensions, TouchableOpacity } from "react-native";
 import { StyleSheet, ActivityIndicator } from 'react-native';
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { Video, AVPlaybackStatus, ResizeMode } from 'expo-av';
@@ -16,6 +16,8 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import { Dropdown } from 'react-native-element-dropdown';
 import Alert from "../../helpers/alert";
 import VideoPlayer from 'expo-video-player'
+import { styles as customStyle } from "../../css/stylesheet";
+
 
 
 const getSourceVideo = async () => {
@@ -32,6 +34,8 @@ const Converter = ({ navigation }: any) => {
     const [source, setSource] = React.useState('');
 
     const [latestSource, setlatestSource] = React.useState("")
+
+    const [actionType, setactionType] = useState("")
 
     const refRBSheet = useRef<any>();
     const { width } = useWindowDimensions()
@@ -61,9 +65,12 @@ const Converter = ({ navigation }: any) => {
         translateVideo({ uri: sourceVideo })
     }
 
-    useEffect(() => {
-        to_lang && from_lang && onPress() && refRBSheet.current.close()
-    }, [from_lang, to_lang])
+    // useEffect(() => {
+    //     if (actionType || to_lang || from_lang) {
+    //         onPress()
+    //         refRBSheet.current.close()
+    //     }
+    // }, [from_lang, to_lang])
 
 
 
@@ -105,7 +112,7 @@ const Converter = ({ navigation }: any) => {
                 uri: Platform.OS === 'ios' ? uri.replace('file://', '') : uri,
             } as any);
 
-            const response = await videoApiSdk.getVideoAudioTranslationTranscription({ uri: formdata,from_lang,to_lang })
+            const response = await videoApiSdk.getVideoAudioTranslationTranscription({ uri: formdata, from_lang, to_lang, action: actionType })
 
             setsubtitles(response?.data?.captions)
             setsubtitleId(response?.data?.id)
@@ -195,7 +202,7 @@ const Converter = ({ navigation }: any) => {
                 </View>}
                 <LoadingModal visible={isLoading} />
                 {
-                    latestSource &&<>
+                    latestSource && <>
                         <Plyr uri={latestSource} result={result} />
                         <ScrollView style={styles.subtitleEditoContainer} horizontal>
                             {
@@ -204,7 +211,7 @@ const Converter = ({ navigation }: any) => {
                                 )
                             }
                         </ScrollView>
-                    </> 
+                    </>
 
                 }
                 {
@@ -240,43 +247,115 @@ const Converter = ({ navigation }: any) => {
                 >
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width, paddingHorizontal: 20, flexWrap: "wrap" }}>
                         <Dropdown
-                            style={[styles.dropdown]}
+                            style={[styles.dropdown, { width: "100%", marginBottom: 30 }]}
                             placeholderStyle={styles.placeholderStyle}
                             selectedTextStyle={styles.selectedTextStyle}
                             inputSearchStyle={styles.inputSearchStyle}
                             iconStyle={styles.iconStyle}
-                            data={fromlang}
+                            data={[{ label: "Transcribe", value: "transcribe" }, { label: "Translate", value: "translate" }]}
                             search
                             maxHeight={300}
                             labelField="label"
                             valueField="value"
-                            placeholder={"From Lan"}
+                            placeholder={"Select Action"}
                             searchPlaceholder="Search..."
-                            value={from_lang}
+                            value={actionType}
                             onChange={(item: any) => {
-                                setfrom_lang(item?.value);
+                                setactionType(item?.value);
                             }}
 
                         />
-                        <Dropdown
-                            style={[styles.dropdown]}
-                            placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            inputSearchStyle={styles.inputSearchStyle}
-                            iconStyle={styles.iconStyle}
-                            data={tolang}
-                            search
-                            maxHeight={300}
-                            labelField="label"
-                            valueField="value"
-                            placeholder={'To lang'}
-                            searchPlaceholder="Search..."
-                            value={to_lang}
-                            onChange={(item: any) => {
-                                setto_lang(item?.value);
-                            }}
+                        {
+                            actionType == "translate" &&
+                            <>
+                                <Dropdown
+                                    style={[styles.dropdown]}
+                                    placeholderStyle={styles.placeholderStyle}
+                                    selectedTextStyle={styles.selectedTextStyle}
+                                    inputSearchStyle={styles.inputSearchStyle}
+                                    iconStyle={styles.iconStyle}
+                                    data={fromlang}
+                                    search
+                                    maxHeight={300}
+                                    labelField="label"
+                                    valueField="value"
+                                    placeholder={"From Lan"}
+                                    searchPlaceholder="Search..."
+                                    value={from_lang}
+                                    onChange={(item: any) => {
+                                        setfrom_lang(item?.value);
+                                    }}
 
-                        />
+                                />
+                                <Dropdown
+                                    style={[styles.dropdown]}
+                                    placeholderStyle={styles.placeholderStyle}
+                                    selectedTextStyle={styles.selectedTextStyle}
+                                    inputSearchStyle={styles.inputSearchStyle}
+                                    iconStyle={styles.iconStyle}
+                                    data={tolang}
+                                    search
+                                    maxHeight={300}
+                                    labelField="label"
+                                    valueField="value"
+                                    placeholder={'To lang'}
+                                    searchPlaceholder="Search..."
+                                    value={to_lang}
+                                    onChange={(item: any) => {
+                                        setto_lang(item?.value);
+                                    }}
+
+                                />
+                            </>
+
+                        }
+                        {
+                            actionType == "transcribe" &&
+                            <>
+                                <Dropdown
+                                    style={[styles.dropdown, { width: "100%", marginBottom: 30 }]}
+                                    placeholderStyle={styles.placeholderStyle}
+                                    selectedTextStyle={styles.selectedTextStyle}
+                                    inputSearchStyle={styles.inputSearchStyle}
+                                    iconStyle={styles.iconStyle}
+                                    data={tolang}
+                                    search
+                                    maxHeight={300}
+                                    labelField="label"
+                                    valueField="value"
+                                    placeholder={'To lang'}
+                                    searchPlaceholder="Search..."
+                                    value={to_lang}
+                                    onChange={(item: any) => {
+                                        setto_lang(item?.value);
+                                    }}
+
+                                />
+                            </>
+
+                        }
+                        {
+                            actionType &&
+                            <TouchableOpacity
+                                style={{
+                                    ...customStyle.primaryButton,
+                                    width: "100%",
+                                    marginVertical: 20,
+                                }}
+                                onPress={() => {
+                                    onPress()
+                                    refRBSheet.current.close()
+                                }}
+                            >
+                                {
+                                    isLoading ? <ActivityIndicator />
+                                        :
+                                        <Text style={{ color: "#CFD8D8", fontSize: 16 }}>Proceed</Text>
+                                }
+                            </TouchableOpacity>
+
+                        }
+
                     </View>
                 </RBSheet>
             </View>
