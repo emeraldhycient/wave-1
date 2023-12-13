@@ -14,12 +14,14 @@ import {
 } from "react-native";
 import * as NavigationBar from "expo-navigation-bar";
 import { styles } from "../css/stylesheet";
+import Alert from "../helpers/alert";
+import { paymentService } from "../services/payment/payment.service";
 
 export default function Subscription({ navigation }) {
-  const [fullName, setFullName] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvv, setCVV] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
+  const [cardHolder, setcardHolder] = useState("olivia lee");
+  const [expiry, setExpiry] = useState("12/24");
+  const [cvv, setCVV] = useState("343");
+  const [cardNumber, setCardNumber] = useState("5421080101000000");
   const [activeButtonIndex, setActiveButtonIndex] = useState(0);
   const [cardPayment, setCardPayment] = useState(true);
   const [googlePay, setGooglePay] = useState(false);
@@ -89,6 +91,25 @@ export default function Subscription({ navigation }) {
     }, [])
   );
 
+  const [isLoading, setisLoading] = useState(false)
+
+  const handlePayment = async () => {
+    setisLoading(true)
+    try {
+      const res = await paymentService.makeCardPayment({ cardHolder, cardNumber, cvv, exp: expiry })
+      console.log(res.data)
+      Alert.success("Payment processing. You will be notified on success and your account will be activated.")
+      setTimeout(() => {
+        navigation.goBack()
+      }, 400);
+      setisLoading(false)
+    } catch (error) {
+      Alert.error(error?.response?.data?.detail)
+      console.log(error?.response.data)
+      setisLoading(false)
+    }
+  }
+
   return (
     <View style={styless.container}>
       <ImageBackground
@@ -137,8 +158,8 @@ export default function Subscription({ navigation }) {
             <>
               <TextInput
                 placeholder="Card Name, e.g: John Doe"
-                onChangeText={(text) => setFullName(text)}
-                value={fullName}
+                onChangeText={(text) => setcardHolder(text)}
+                value={cardHolder}
                 style={styles.input}
                 placeholderTextColor={"gray"}
               />
@@ -153,7 +174,7 @@ export default function Subscription({ navigation }) {
               <View style={{ display: "flex", flexDirection: "row" }}>
                 <TextInput
                   inputMode="numeric"
-                  placeholder="Expiry Date, e.g: 01/1991"
+                  placeholder="Expiry Date, e.g: 01/26"
                   onChangeText={(text) => setExpiry(text)}
                   value={expiry}
                   style={styles.cardExpiry}
@@ -173,12 +194,28 @@ export default function Subscription({ navigation }) {
               <Text style={{ color: "white", marginTop: 5 }}>
                 You will be billed $5.66 monthly
               </Text>
-              <TouchableOpacity
-                style={{ ...styles.primaryButton, width: "90%", marginTop: 20 }}
-                onPress={() => navigation.navigate("WaveLoader")}
-              >
-                <Text style={styles.mediumText}>Pay</Text>
-              </TouchableOpacity>
+              {
+                isLoading ?
+                  <View
+                    style={{
+                      height: 80,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ActivityIndicator />
+                  </View> :
+                  <TouchableOpacity
+                    style={{ ...styles.primaryButton, width: "90%", marginTop: 20 }}
+                    // onPress={() => navigation.navigate("WaveLoader")}
+                    onPress={handlePayment}
+                  >
+                    <Text style={styles.mediumText}>Pay</Text>
+                  </TouchableOpacity>
+
+              }
             </>
           )}
           {googlePay && (

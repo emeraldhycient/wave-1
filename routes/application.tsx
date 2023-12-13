@@ -18,7 +18,7 @@ const Stack = createNativeStackNavigator();
 
 export default function MainStack() {
     return (
-        <Stack.Navigator initialRouteName="Payment" >
+        <Stack.Navigator >
             <Stack.Screen
                 options={{ headerShown: false }}
                 name="Payment"

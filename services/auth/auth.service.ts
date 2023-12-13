@@ -33,6 +33,10 @@ class Auth {
         return await axiosClient.get('/users/dialing_code/')
     }
 
+    async getMyDetails() {
+        return await axiosClient.get("/users/me/")
+    }
+
 
 
 }

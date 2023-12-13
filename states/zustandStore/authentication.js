@@ -27,7 +27,6 @@ const useAuthenticationState = create((set) => ({
         set((state) => ({
             authentication: {
                 ...state.authentication,
-                token: user.token,
                 user: user
             }
         })),

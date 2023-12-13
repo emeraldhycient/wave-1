@@ -39,7 +39,7 @@ function AuthScreen({ navigation }: any) {
     setIsSignIn(!isSignIn);
   };
 
-  const fetchCodes =async () => {
+  const fetchCodes = async () => {
     try {
       const data = await authService.getAllCountryCodes()
       const val = JSON.parse(data.data)
@@ -52,7 +52,7 @@ function AuthScreen({ navigation }: any) {
   useEffect(() => {
     fetchCodes()
   }, [])
-  
+
 
   const setUser = useAuthenticationState((state: any) => state.setUser);
   const setIsAuthenticated = useAuthenticationState((state: any) => state.setIsAuthenticated);
@@ -100,8 +100,8 @@ function AuthScreen({ navigation }: any) {
       console.log(error?.response.data)
       setisLoading(false)
     }
-
   };
+
   const handleLogin = async () => {
     if (!phone || !couuntryCode || !password && !isLoading) {
       Alert.error("please enter your phone correctly and enter the otp  ")
@@ -111,8 +111,9 @@ function AuthScreen({ navigation }: any) {
     setisLoading(true)
     try {
       const response = await authService.login({ phone_no: `${couuntryCode}${phone}`, otp: password })
-      console.log(response.data)
-      setIsAuthenticated(true)
+      // console.log(response.data)
+      getUserDetails()
+
       setToken(response.data.access)
       Alert.success(`login successful`)
       setisLoading(false)
@@ -130,6 +131,37 @@ function AuthScreen({ navigation }: any) {
     // navigate to forgot password here.
     navigation.navigate("ForgotPassword");
   };
+
+  const getUserDetails = async () => {
+    try {
+      const me = await authService.getMyDetails()
+      setUser(me?.data)
+      setIsAuthenticated(true)
+
+      if (me.data.has_active_subscription) {
+        navigation.navigate("Home")
+        return
+      }
+
+      if (me.data.free_mode_status === "NOT_USED") {
+        navigation.navigate("Payment")
+        return
+      }
+      if (me.data.free_mode_status === "ACTIVE") {
+        navigation.navigate("Home")
+        return
+      }
+
+      if (me.data.free_mode_status === "EXPIRED") {
+        navigation.navigate("Subscription")
+        return
+      }
+
+    } catch (error: any) {
+      Alert.error(error?.response?.data?.detail)
+    }
+
+  }
 
   return (
     <ScrollView style={{ flex: 1, height: '100%', backgroundColor: "#000000" }} contentContainerStyle={[{ margin: 0, backgroundColor: "#000000" }, { paddingVertical: 50 }]}>
@@ -191,13 +223,13 @@ function AuthScreen({ navigation }: any) {
                   value={couuntryCode}
                   onFocus={() => setIsFocus(true)}
                   onBlur={() => setIsFocus(false)}
-                  onChange={(item:any) => {
+                  onChange={(item: any) => {
                     setcouuntryCode(item?.code);
                     setIsFocus(false);
                   }}
-                 
+
                 />
-               
+
               </View>
               <TextInput
                 keyboardType="numeric"
@@ -267,13 +299,13 @@ function AuthScreen({ navigation }: any) {
                   value={couuntryCode}
                   onFocus={() => setIsFocus(true)}
                   onBlur={() => setIsFocus(false)}
-                  onChange={(item:any) => {
+                  onChange={(item: any) => {
                     setcouuntryCode(item?.code);
                     setIsFocus(false);
                   }}
 
                 />
-               
+
               </View>
               <TextInput
                 keyboardType="numeric"
@@ -395,7 +427,7 @@ const styless = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 16,
-    color:"white"
+    color: "white"
   },
   selectedTextStyle: {
     fontSize: 16,

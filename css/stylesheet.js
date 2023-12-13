@@ -144,7 +144,7 @@ export const styles = StyleSheet.create({
   },
 
   paymentTypeContainer: {
-    width: 50,
+    // width: 50,
     display: "flex",
     flexDirection: "column",
     gap: 10,
