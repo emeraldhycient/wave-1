@@ -43,7 +43,7 @@ const useAuthenticationState = create((set) => ({
         set((state) => ({
             authentication: {
                 ...state.authentication,
-                isAuthenticated
+                isAuthenticated:isAuthenticated
             }
 
         })),                    

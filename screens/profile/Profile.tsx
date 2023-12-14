@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, View, useWindowDimensions } from 'react-native'
+import { Platform, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions, Alert as RNAlert } from 'react-native'
 import React from 'react'
 import CustomHeader from '../../components/common/customHeader'
 import { ScrollView } from 'react-native'
@@ -7,16 +7,44 @@ import ActionCard from '../../components/profile/ActionCard'
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import useAuthenticationState from '../../states/zustandStore/authentication'
+import { setToken } from '../../states/asyncStore/token'
 
 const Profile = () => {
   const { width, height } = useWindowDimensions()
 
+  const { user } = useAuthenticationState((state: any) => state.authentication);
+  
+  const setIsAuthenticated = useAuthenticationState((state: any) => state.setIsAuthenticated);
+
+  const handleLogout = () => {
+    RNAlert.alert(
+      "Are your sure?",
+      "Are you sure you want to logout ?",
+      [
+        // The "Yes" button
+        {
+          text: "Yes",
+          onPress: () => {
+            setIsAuthenticated(false)
+            setToken("")
+          },
+        },
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: "No",
+        },
+      ]
+    );
+  }
+
   return (
     <ScrollView style={{ flex: 1, height: '100%', backgroundColor: "#000000" }} contentContainerStyle={[{ margin: 0, backgroundColor: "#000000" }]}>
-      <CustomHeader title="Igweze Hycient" titleStyle={{ fontWeight: '600', fontSize: 20 }} />
+      <CustomHeader title={user?.name ?? "loading ..."} titleStyle={{ fontWeight: '600', fontSize: 20 }} />
       <View style={{ flexDirection: "column", justifyContent: "space-between", height: Platform.OS === "android" ? height - 150 : height - 270 }}>
         <View>
-          <Text style={{ color: Colors.grey, fontSize: 14, textAlign: "center" }}>igwezehycient86@gmail.com</Text>
+          <Text style={{ color: Colors.grey, fontSize: 14, textAlign: "center" }}>{user?.phone_no ?? "loading"}</Text>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width, paddingHorizontal: 20, flexWrap: "wrap" }}>
             <View style={{ width: "46%" }}>
               <ActionCard icon={<AntDesign name="wechat" size={26} color={'#0DA84C'} style={{ marginBottom: 5 }} />} title={"Support"} onPress={() => { }} />
@@ -44,9 +72,11 @@ const Profile = () => {
           </View>
         </View>
         <View>
-          <View style={{ borderWidth: 0.4, borderColor: Colors.grey, height: 45, marginHorizontal: 30, marginTop: 30, marginBottom: 20, alignSelf: "center", width: width - 70, borderRadius: 7, justifyContent: "center" }}>
-            <Text style={{ color: Colors.primary, fontSize: 16, fontWeight: "500", textAlign: "center" }}>Log Out</Text>
-          </View>
+          <TouchableOpacity onPress={handleLogout}>
+            <View style={{ borderWidth: 0.4, borderColor: Colors.grey, height: 45, marginHorizontal: 30, marginTop: 30, marginBottom: 20, alignSelf: "center", width: width - 70, borderRadius: 7, justifyContent: "center" }}>
+              <Text style={{ color: Colors.primary, fontSize: 16, fontWeight: "500", textAlign: "center" }}>Log Out</Text>
+            </View>
+          </TouchableOpacity>
           <View style={{ borderWidth: 0.4, borderColor: Colors.grey, height: 45, marginHorizontal: 30, marginTop: 5, marginBottom: 30, alignSelf: "center", width: width - 70, borderRadius: 7, justifyContent: "center" }}>
             <Text style={{ color: Colors.red, fontSize: 16, fontWeight: "500", textAlign: "center" }}>Delete Account</Text>
           </View>

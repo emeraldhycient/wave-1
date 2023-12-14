@@ -101,7 +101,7 @@ const Home = ({ navigation }: any) => {
 
                       const shorten = name.slice(0, 6)
 
-                      downloadAndSaveVideo(item?.media, "wave-" + shorten + fileType)
+                      downloadAndSaveVideo(item?.media, "wave-" + shorten + "." + fileType)
                     }}
                   >
                     {
